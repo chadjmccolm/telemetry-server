@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon nodemon --ignore data/ index.js"
+    "dev": "nodemon nodemon --ignore data/ --ignore readme.md index.js"
   },
   "author": "Chad McColm",
   "license": "ISC",
