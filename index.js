@@ -4,13 +4,25 @@ var app = require('express')();
 var express = require('express');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var MongoClient = require('mongodb').MongoClient
+
+var collection;
+
+MongoClient.connect("mongodb://localhost:27017/", function(err, database) {
+
+  if(err) { return console.dir(err); }
+
+  const myAwesomeDB = database.db('testdatabase')
+  collection = myAwesomeDB.collection('fast')
+
+})
 
 app.use("/public", express.static(__dirname + "/public"));
 
 app.get('/', function(req, res){
     res.sendFile(__dirname + '/index.html');
 })
-  
+
 http.listen(3000, '0.0.0.0', function(){
     console.log('listening on *:3000');
 })
@@ -24,14 +36,13 @@ io.on('connection', function(socket){
 })
 
 var output = {};
-var file = 'data.json'
 
 var console_lastsend = new Date().getTime();
 var io_lastsend = new Date().getTime();
 var log_lastsend = new Date().getTime();
 var console_timeout = 1000;
 var io_timeout = 100;
-var log_timeout = 50;
+var log_timeout = 20;
 
 client.on('message', function (topic, message) {
 
@@ -41,6 +52,7 @@ client.on('message', function (topic, message) {
     parsed_message = parsed_message.substring(parsed_message.indexOf(":")+1);
 
     output[topic] = parsed_message;
+    output["time"] = iteration_time;
 
     if(iteration_time - console_lastsend > console_timeout){
         console.log(output);
@@ -53,7 +65,8 @@ client.on('message', function (topic, message) {
     }
 
     if(iteration_time - log_lastsend > log_timeout){
-        // Implement logger here
+        collection.insert(output, function (err, result) {});
+        delete output['_id'];
         log_lastsend = iteration_time;
     }
 
