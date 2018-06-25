@@ -6,6 +6,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 app.use("/public", express.static(__dirname + "/public"));
+
 app.get('/', function(req, res){
     res.sendFile(__dirname + '/index.html');
 })
@@ -52,7 +53,6 @@ client.on('message', function (topic, message) {
     }
 
     if(iteration_time - log_lastsend > log_timeout){
-
         // Implement logger here
         log_lastsend = iteration_time;
     }
