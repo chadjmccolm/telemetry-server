@@ -23,11 +23,14 @@ io.on('connection', function(socket){
 })
 
 var output = {};
+var file = 'data.json'
 
 var console_lastsend = new Date().getTime();
 var io_lastsend = new Date().getTime();
+var log_lastsend = new Date().getTime();
 var console_timeout = 1000;
 var io_timeout = 100;
+var log_timeout = 50;
 
 client.on('message', function (topic, message) {
 
@@ -46,6 +49,12 @@ client.on('message', function (topic, message) {
     if(iteration_time - io_lastsend > io_timeout){
         io.emit("mqttdata", output);
         io_lastsend = iteration_time;
+    }
+
+    if(iteration_time - log_lastsend > log_timeout){
+
+        // Implement logger here
+        log_lastsend = iteration_time;
     }
 
 })
