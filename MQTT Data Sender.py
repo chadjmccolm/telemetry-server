@@ -4,18 +4,17 @@ import time
 broker_address="localhost"
 client = mqtt.Client()
 client.connect(broker_address)
-
 i = 0.0
 going_down = False
 
 while(True):
 
-	client.publish("hybrid/engine/AFR", 10.0 + i/4.0)
-	client.publish("hybrid/engine/TPS", 0 + i * 10.0)
-	client.publish("hybrid/engine/temperature", 170.0 + i * 2.0)
-	client.publish("hybrid/dash/charge", 0 + i * 10.0)
-	client.publish("hybrid/dash/fuel", 100.0 - i * 10.0)
-	client.publish("hybrid/dash/GLVoltage", 10.0 + i * 0.4)
+	client.publish("hybrid/engine/AFR", "1:" + str(10.0 + i/4.0))
+	client.publish("hybrid/engine/TPS", "2:" + str(0 + i * 10.0))
+	client.publish("hybrid/engine/temperature", "33:" + str(170.0 + i * 2.0))
+	client.publish("hybrid/dash/charge", "45:" + str(i * 10.0))
+	client.publish("hybrid/dash/fuel", "67:" + str(100.0 - i * 10.0))
+	client.publish("hybrid/dash/GLVoltage", "88:" + str(10.0 + i * 0.4))
 
 	print("data set sent for iteration value: " + str(i) + " sent temp was " + str(170.0 + i * 2.0))
 

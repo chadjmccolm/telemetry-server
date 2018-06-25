@@ -33,7 +33,10 @@ client.on('message', function (topic, message) {
 
     let iteration_time = new Date().getTime();
 
-    output[topic] = message.toString();
+    let parsed_message = message.toString();
+    parsed_message = parsed_message.substring(parsed_message.indexOf(":")+1);
+
+    output[topic] = parsed_message;
 
     if(iteration_time - console_lastsend > console_timeout){
         console.log(output);
