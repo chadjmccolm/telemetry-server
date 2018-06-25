@@ -12,8 +12,8 @@ MongoClient.connect("mongodb://localhost:27017/", function(err, database) {
 
   if(err) { return console.dir(err); }
 
-  const myAwesomeDB = database.db('testdatabase')
-  collection = myAwesomeDB.collection('fast')
+  const myAwesomeDB = database.db('telemetry')
+  collection = myAwesomeDB.collection('snapshots')
 
 })
 
