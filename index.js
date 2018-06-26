@@ -6,6 +6,10 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var MongoClient = require('mongodb').MongoClient
 
+var console_timeout = 1000;
+var io_timeout = 100;
+var log_timeout = 20;
+
 var collection;
 
 MongoClient.connect("mongodb://localhost:27017/", function(err, database) {
@@ -15,34 +19,31 @@ MongoClient.connect("mongodb://localhost:27017/", function(err, database) {
   const myAwesomeDB = database.db('telemetry')
   collection = myAwesomeDB.collection('snapshots')
 
-})
+});
 
 app.use("/public", express.static(__dirname + "/public"));
 
 app.get('/', function(req, res){
     res.sendFile(__dirname + '/index.html');
-})
+});
 
 http.listen(3000, '0.0.0.0', function(){
     console.log('listening on *:3000');
-})
+});
  
 client.on('connect', function () {
     client.subscribe('hybrid/#')
-})
+});
 
 io.on('connection', function(socket){
     console.log('a user connected');
-})
+});
 
 var output = {};
 
 var console_lastsend = new Date().getTime();
 var io_lastsend = new Date().getTime();
 var log_lastsend = new Date().getTime();
-var console_timeout = 1000;
-var io_timeout = 100;
-var log_timeout = 20;
 
 client.on('message', function (topic, message) {
 
@@ -70,4 +71,4 @@ client.on('message', function (topic, message) {
         log_lastsend = iteration_time;
     }
 
-})
+});
