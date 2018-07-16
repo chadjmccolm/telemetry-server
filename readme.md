@@ -29,7 +29,7 @@ Exporting the data to csv is an easy way to view it in other programs like Excel
 
 To export all the data from the database open command prompt and navigate to the output folder you want and enter `mongoexport -d telemetry -c snapshots --type=csv --fields time,hybrid/engine/temperature -o output.csv` replacing the output file with the location of your choice and the fields with the fields you want. Make sure there are no spaces in the fields list. 
 
-If you want to export JSON use: `mongoexport -d telemetry -c snapshots -o output.csv`.
+If you want to export JSON use: `mongoexport -d telemetry -c snapshots -o output.json`.
 
 To specify a time you need to know the unix time (in milliseconds) of the start and end. I use this online service to determine those https://www.epochconverter.com/ because it let's me input time zone info. Then you add that query to your data export like so `mongoexport -d telemetry -c snapshots --type=csv --fields time,hybrid/engine/temperature -o outputfilter.csv --query "{time: {$gte: 1529971200000, $lte: 1529971500000}}"`. This is data between 5PM and 5:05PM on July 25, 2018.
 
