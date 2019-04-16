@@ -12,7 +12,7 @@ These instructions will be based on a windows installation
 2. Open command prompt and type `mongod.exe --dbpath "C:\Users\Chad McColm\Documents\Dev\telemetry-server\data"` replacing `"C:\Users\Chad McColm\Documents\Dev\telemetry-server\data"` with the data folder location you made in step 1
 3. Unzip mosquitto.zip (contains all dependencies etc.) to a location on your hard drive and add the folder to path
 4. Start the mosquitto server from windows command prompt with `mosquitto.exe`
-    - if you wish to see the incoming data `mosquitto_sub.exe -t "hybrid/#"` will show you a stream in the command line
+    - if you wish to see the incoming data `mosquitto_sub.exe -v -t "hybrid/#"` will show you a stream in the command line
 5. Open a new command prompt and navigate to the repository folder
 6. Type `npm install` to install all the dependencies of this node.js project
 7. Type `npm start` to start the node server
