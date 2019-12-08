@@ -34,7 +34,7 @@ int main(){
     // Create the file objects
     fstream input;
     fstream output;
-    input.open("sample2.dbc",ios::in);
+    input.open("sample.dbc",ios::in);
     output.open("DBC_generated.js",ios::out);
 
     // Variable to track our position within a message
@@ -108,7 +108,7 @@ int main(){
                     
                     output << "\tloadBinaryData : function(data){\n";
                     for(loadBinaryDataParameters parameter : parameters){
-                        output << "\t\t" << parameter.signal << " = data & " << parameter.binaryselector << " * " << parameter.scalingFactor << " + " << parameter.offset << "\n";
+                        output << "\t\tthis." << parameter.signal << " = data & " << parameter.binaryselector << " * " << parameter.scalingFactor << " + " << parameter.offset << "\n";
                     }
                     output << "\t}\n";
 
@@ -184,7 +184,7 @@ int main(){
         }
 
         // After reading all the lines of the file, make the vehicle data variable 
-        output << "var vehicleState = {" << "\n";
+        output << "module.exports = {" << "\n";
         for (loadMessageParameters CANMessage : CANmessages){
             output << "\t" << CANMessage.message << ",\n";
         }
@@ -201,9 +201,6 @@ int main(){
         }
         output << "\t}\n";
         output << "}\n\n";
-
-        
-        output << "console.log(\"DBC file loaded\");\n";
 
         // Cleanup open files
         input.close();

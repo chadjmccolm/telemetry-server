@@ -1,4 +1,4 @@
-require('./DBC_generated.js');
+var vehicleStatus = require('./DBC_generated.js');
 
 var mqtt = require('mqtt')
 var client  = mqtt.connect('mqtt://localhost')
@@ -46,6 +46,18 @@ var output = {};
 var console_lastsend = new Date().getTime();
 var io_lastsend = new Date().getTime();
 var log_lastsend = new Date().getTime();
+
+// Populate an object with the incoming message
+var incomingMessage = {
+    ID : 336,
+    data : 85
+}
+
+// Load the message
+vehicleStatus.loadMessage(incomingMessage);
+
+// Export some data
+console.log(vehicleStatus);
 
 client.on('message', function (topic, message) {
 
