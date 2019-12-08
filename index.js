@@ -1,10 +1,12 @@
+require('./DBC_generated.js');
+
 var mqtt = require('mqtt')
 var client  = mqtt.connect('mqtt://localhost')
 var app = require('express')();
 var express = require('express');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var MongoClient = require('mongodb').MongoClient
+// var MongoClient = require('mongodb').MongoClient
 
 var console_timeout = 1000;
 var io_timeout = 100;
@@ -12,14 +14,14 @@ var log_timeout = 20;
 
 var collection;
 
-MongoClient.connect("mongodb://localhost:27017/", function(err, database) {
+// MongoClient.connect("mongodb://localhost:27017/", function(err, database) {
 
-  if(err) { return console.dir(err); }
+//   if(err) { return console.dir(err); }
 
-  const myAwesomeDB = database.db('telemetry')
-  collection = myAwesomeDB.collection('snapshots')
+//   const myAwesomeDB = database.db('telemetry')
+//   collection = myAwesomeDB.collection('snapshots')
 
-});
+// });
 
 app.use("/public", express.static(__dirname + "/public"));
 
@@ -50,20 +52,13 @@ client.on('message', function (topic, message) {
     let iteration_time = new Date().getTime();
 
     let parsed_message = message.toString();
-    parsed_message = parsed_message.substring(parsed_message.indexOf(":")+1);
+    
+    console.log(parsed_message);
 
-    output[topic] = parsed_message;
-    output["time"] = iteration_time;
-
-    if(iteration_time - console_lastsend > console_timeout){
-        console.log(output);
-        console_lastsend = iteration_time;
-    }
-
-    if(iteration_time - io_lastsend > io_timeout){
-        io.emit("mqttdata", output);
-        io_lastsend = iteration_time;
-    }
+    // if(iteration_time - io_lastsend > io_timeout){
+    //     io.emit("mqttdata", output);
+    //     io_lastsend = iteration_time;
+    // }
 
     // if(iteration_time - log_lastsend > log_timeout){
     //     collection.insert(output, function (err, result) {});
