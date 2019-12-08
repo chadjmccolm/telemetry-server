@@ -12,7 +12,7 @@ while(True):
 	client.publish("hybrid/engine/AFR", "1:" + str(10.0 + i/4.0))
 	client.publish("hybrid/engine/TPS", "2:" + str(0 + i * 10.0))
 	client.publish("hybrid/engine/temperature", "33:" + str(170.0 + i * 2.0))
-	client.publish("hybrid/dash/charge", "45:" + str(i * 10.0))
+	client.publish("hybrid/ams/voltage", "45:" + str(36 + i * 5.9))
 	client.publish("hybrid/dash/fuel", "67:" + str(100.0 - i * 10.0))
 	client.publish("hybrid/dash/GLVoltage", "88:" + str(10.0 + i * 0.4))
 
@@ -23,9 +23,9 @@ while(True):
 	else:
 		i -= 0.01
 
-	if(i >= 10):
+	if(i >= 10 - 0.01):
 		going_down = True
-	if(i <= 0):
+	if(i <= 0 + 0.01):
 		going_down = False
 
 	# time chosen to emulate 1000 data points per second with 6 data points every 0.006 seconds (max data being sent)

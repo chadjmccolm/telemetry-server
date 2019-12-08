@@ -65,10 +65,10 @@ client.on('message', function (topic, message) {
         io_lastsend = iteration_time;
     }
 
-    if(iteration_time - log_lastsend > log_timeout){
-        collection.insert(output, function (err, result) {});
-        delete output['_id'];
-        log_lastsend = iteration_time;
-    }
+    // if(iteration_time - log_lastsend > log_timeout){
+    //     collection.insert(output, function (err, result) {});
+    //     delete output['_id'];
+    //     log_lastsend = iteration_time;
+    // }
 
 });
