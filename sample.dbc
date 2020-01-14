@@ -36,16 +36,14 @@ BS_:
 BU_:
 
 
-BO_ 336 MS_Info: 4 Vector__XXX
- SG_ RPM : 23|16@0+ (1,0) [0|65535] "" Vector__XXX
- SG_ AFR : 15|8@0+ (1,0) [0|255] "" Vector__XXX
- SG_ TPS : 7|8@0+ (1,0) [0|255] "" Vector__XXX
-
-BO_ 256 AMS_Feedback: 3 Vector__XXX
- SG_ Regen_Status : 21|1@0+ (1,0) [0|1] "" Vector__XXX
- SG_ AMS_Status : 22|1@0+ (1,0) [0|1] "" Vector__XXX
- SG_ current : 9|8@1- (1,0) [-128|127] "" Vector__XXX
- SG_ voltage : 7|8@0+ (1,0) [0|255] "" Vector__XXX
+BO_ 2 WeirdMessage: 8 Vector__XXX
+ SG_ voltage : 47|8@0+ (0.1,0) [0|25.5] "" Vector__XXX
+ SG_ TPS : 29|8@1+ (0.5,0) [0|127.5] "" Vector__XXX
+ SG_ RPM : 55|16@0+ (1,0) [0|65535] "" Vector__XXX
+ SG_ Regen_Status : 1|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ current : 11|16@1- (1,0) [-128|127] "" Vector__XXX
+ SG_ AMS_Status : 0|1@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ AFR : 3|8@1+ (0.1,0) [0|25.5] "" Vector__XXX
 
 
 

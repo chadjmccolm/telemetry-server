@@ -49,8 +49,9 @@ var log_lastsend = new Date().getTime();
 
 // Populate an object with the incoming message
 var incomingMessage = {
-    ID : 336,
-    data : 85
+    ID : 2,
+    //data : 13984950135432721563n
+    data : 13984950135566017691n
 }
 
 // Load the message

@@ -36,9 +36,11 @@ BS_:
 BU_:
 
 
+BO_ 3221225472 VECTOR__INDEPENDENT_SIG_MSG: 0 Vector__XXX
+ SG_ launch_retard : 0|16@0- (0.1,0) [0|0] "deg" Vector__XXX
+
 BO_ 1570 megasquirt_gp50: 8 Vector__XXX
- SG_ launch_retard : 55|16@0- (0.1,0) [0|0] "deg" Vector__XXX
- SG_ launch_timer : 39|16@0+ (0.001,0) [0|0] "s" Vector__XXX
+ SG_ launch_timer : 38|16@0+ (0.001,0) [0|0] "s" Vector__XXX
  SG_ total_accel : 23|16@0- (0.1,0) [0|0] "%" Vector__XXX
  SG_ map_accel : 7|16@0- (0.1,0) [0|0] "%" Vector__XXX
 
@@ -467,7 +469,8 @@ BO_ 1520 megasquirt_gp0: 8 Vector__XXX
 
 
 
-CM_ SG_ 1570 launch_retard "Launch retard";
+CM_ BO_ 3221225472 "This is a message for not used signals, created by Vector CANdb++ DBC OLE DB Provider.";
+CM_ SG_ 3221225472 launch_retard "Launch retard";
 CM_ SG_ 1570 launch_timer "Timer for timed-launch retard";
 CM_ SG_ 1570 total_accel "Total accel";
 CM_ SG_ 1570 map_accel "MAPdot based accel";

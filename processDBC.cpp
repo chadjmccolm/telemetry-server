@@ -5,6 +5,10 @@ Date: Dec. 7, 2019
 
 C++ Code that looks through a DBC file and processes it into a Javascript object that can react to incoming data
 
+
+Todo:
+ - test
+
 */
 
 // Include required libraries
@@ -18,6 +22,10 @@ using namespace std;
 struct loadBinaryDataParameters {
   string signal;
   unsigned long long binaryselector;
+  int rightShift;
+  int isSigned;
+  int Intel;
+  int length;
   float scalingFactor;
   float offset;
 };
@@ -26,6 +34,7 @@ struct loadBinaryDataParameters {
 struct loadMessageParameters {
   string message;
   int id;
+  int DLC;
 };
 
 // Main function runs at program start
@@ -51,6 +60,49 @@ int main(){
 
     // Check if files openned correctly
     if(input.is_open() && output.is_open()) {
+
+        // Print the reverseBytes function for use later
+        output << "function reverseBytes(data, DLC){" << "\n";
+        output << "    " << "\n";
+        output << "    // Create a storage place for inverting the order of the bytes" << "\n";
+        output << "    let bytes = [];" << "\n";
+        output << "    " << "\n";
+        output << "    // Loop through the bytes of data and save them into the bytes array in reverse order" << "\n";
+        output << "    for(var i = 0n; i < DLC; i++){" << "\n";
+        output << "        // add first 8 bits of the data to the array" << "\n";
+        output << "        var middle = (data & (255n << 8n*i)) >> 8n*i;" << "\n";
+        output << "        bytes.unshift(middle);" << "\n";
+        output << "    }" << "\n";
+        output << "    " << "\n";
+        output << "    // Create storage value for the output" << "\n";
+        output << "    let output = 0n;" << "\n";
+        output << "    " << "\n";
+        output << "    // Combine the bytes into the correct order and store in output block" << "\n";
+        output << "    for(var i = 0n; i < DLC; i++){" << "\n";
+        output << "        output = output | bytes[i] << 8n*i;" << "\n";
+        output << "    }" << "\n";
+        output << "    " << "\n";
+        output << "    return output;" << "\n";
+        output << "}" << "\n\n";
+
+        // Print the signify function for use later
+        output << "// Takes a number of some bit-length and interprets it as a signed value" << "\n";
+        output << "function signify(number, bitLength){" << "\n";
+        output << "" << "\n";
+        output << "    // Get the first bit of number" << "\n";
+        output << "    firstBit = number >> bitLength - 1;" << "\n";
+        output << "" << "\n";
+        output << "    // populate out the left side of the number until it becomes 32 bits long" << "\n";
+        output << "    for (i = bitLength; i < 32; i++){" << "\n";
+        output << "        number = number | firstBit << i;" << "\n";
+        output << "    }" << "\n";
+        output << "" << "\n";
+        output << "    // bitwise or with 0 to make it intepret as signed" << "\n";
+        output << "    number = number | 0;" << "\n";
+        output << "" << "\n";
+        output << "    return number;" << "\n";
+        output << "" << "\n";
+        output << "}" << "\n\n";
 
         while(getline(input, line)){ 
 
@@ -84,6 +136,7 @@ int main(){
                 // Save the message name and ID to the CANmessages vector
                 loadMessageParameters CANmessage;
                 CANmessage.id = id;
+                CANmessage.DLC = length;
                 CANmessage.message = message;
                 CANmessages.push_back(CANmessage);
 
@@ -108,7 +161,28 @@ int main(){
                     
                     output << "\tloadBinaryData : function(data){\n";
                     for(loadBinaryDataParameters parameter : parameters){
-                        output << "\t\tthis." << parameter.signal << " = data & " << parameter.binaryselector << " * " << parameter.scalingFactor << " + " << parameter.offset << "\n";
+
+                        if(parameter.isSigned == 1){
+                            output << "\t\tthis." << parameter.signal << " = signify(Number(";
+                        }
+                        else{
+                            output << "\t\tthis." << parameter.signal << " = Number(";
+                        }
+                        
+                        if(parameter.Intel == 1){
+                            output << "(data & " << parameter.binaryselector << "n)";
+                        }
+                        else{
+                            output << "reverseBytes(data & " << parameter.binaryselector << "n, " << CANmessages.back().DLC << "n)";
+                        }
+                        
+                        if(parameter.isSigned == 1){
+                            output << " >> " << parameter.rightShift << "n)" << ", " << parameter.length << ") * " << parameter.scalingFactor << " + " << parameter.offset << "\n";
+                        }
+                        else{
+                            output << " >> " << parameter.rightShift << "n) * " << parameter.scalingFactor << " + " << parameter.offset << "\n";
+                        }
+                        
                     }
                     output << "\t}\n";
 
@@ -127,6 +201,7 @@ int main(){
                 int startbit;
                 int length;
                 int Intel;
+                int isSigned;
                 float scalefactor;
                 float offset;
 
@@ -144,6 +219,7 @@ int main(){
                 startbit = stoi(line.substr(colon + 2, bar - colon - 2));
                 length = stoi(line.substr(bar + 1, at - bar - 1));
                 Intel = stoi(line.substr(at + 1, 1));
+                isSigned = line.substr(at + 2, 1) == "-";
                 scalefactor = stof(line.substr(leftparentheses + 1, comma - leftparentheses -1));
                 offset = stof(line.substr(comma + 1, rightparentheses - comma -1));
                 
@@ -152,27 +228,56 @@ int main(){
 
                 // print the selected bits in decimal format
                 unsigned long long binaryselector;
-                binaryselector = 1 << startbit;
-                // If the Endianness is big (Motorola)
+                // create an unsigned long long for the selector bit so when it's left shifted it doesn't overflow
+                unsigned long long binary = 1;
+                binaryselector = binary << startbit;
+                int rightShift = 0;
+
+                // If the Endianness is small (Intel)
                 if(Intel){
+
                     // Make as many digits to the left of the original 1 as needed
                     for(int i = startbit+1; i < startbit + length; i++){
-                        binaryselector = binaryselector | (1 << i);
+                        binaryselector = binaryselector | (binary << i);
                     }
+
+                    // Set the rightshift to the startbit 
+                    rightShift = startbit;
                 }
-                // If the Endianness is small (Intel)
+                // If the Endianness is big (Motorola)
                 else{
+
+                    // Normally you'd just left shift the binary index by i but when you hit the end of a byte you must start populating the next byte in Motorola so we need a separate index that loops around when you hit the end of a byte
+                    int index = startbit-1;
                     // Make as many digits to the right of the original 1 as needed
                     for(int i = startbit-1; i > startbit - length; i--){
-                        binaryselector = binaryselector | (1 << i);
+
+                        // Select the correct digits
+                        binaryselector = binaryselector | (binary << index);
+
+                        // Loop the index around
+                        if(i % 8 == 0) index += 16;
+                        index--;
+
+                    }
+                    
+                    if(index > CANmessages.back().DLC * 8){
+                        rightShift = 0;
+                    }
+                    else{
+                        rightShift = (index % 8) + 1 + (CANmessages.back().DLC * 8 - index)/8*8;
                     }
                 }
 
                 // Save the parameters needed later to load the binary data
                 loadBinaryDataParameters parameter;
                 parameter.signal = signal;
+                parameter.length = length;
+                parameter.Intel = Intel;
+                parameter.isSigned = isSigned;
                 parameter.binaryselector = binaryselector;
                 parameter.offset = offset;
+                parameter.rightShift = rightShift;
                 parameter.scalingFactor = scalefactor;
                 parameters.push_back(parameter);
 
