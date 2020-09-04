@@ -12,7 +12,7 @@
   "dependencies": {
     "express": "^4.15.2",
     "jquery": "^3.3.1",
-    "mongodb": "^3.0.10",
+    "mongodb": "^3.1.13",
     "mqtt": "^2.18.1",
     "npm": "^6.2.0",
     "socket.io": "^2.1.1"
